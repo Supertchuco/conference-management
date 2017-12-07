@@ -30,3 +30,8 @@ To run this project you have two options:
 
 In both of approaches you can access the application through browser and this url
 http://localhost:8080
+
+To use the application:
+ - click in Browse button to select a file
+ - click int upload button to make the upload file
+ - if the process was successfully click in Get Files Processed button to download the file
