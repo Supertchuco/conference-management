@@ -11,12 +11,12 @@ public class Lecture {
     LocalTime startTimeEvent;
 
 
-    public Lecture(int time, String name){
+    public Lecture(int time, String name) {
         this.time = time;
         this.name = name;
     }
 
-    public Lecture(int time, String name, LocalTime startTimeEvent){
+    public Lecture(int time, String name, LocalTime startTimeEvent) {
         this.time = time;
         this.name = name;
         this.startTimeEvent = startTimeEvent;

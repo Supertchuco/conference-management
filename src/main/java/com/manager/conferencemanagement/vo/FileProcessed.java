@@ -9,7 +9,7 @@ public class FileProcessed {
 
     private String fileResult;
 
-    public FileProcessed(String fileName, String fileResult){
+    public FileProcessed(String fileName, String fileResult) {
         this.fileName = fileName;
         this.fileResult = fileResult;
     }

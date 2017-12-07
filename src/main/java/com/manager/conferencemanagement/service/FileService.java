@@ -28,7 +28,7 @@ public class FileService {
         for (String line : lines) {
             try {
                 lectures.add(new Lecture(Integer.parseInt(StringUtils.substring(line, StringUtils.lastIndexOf(line, " "), StringUtils.lastIndexOf(line, "min")).trim()), StringUtils.substring(line, 0, StringUtils.lastIndexOf(line, " "))));
-            }catch (Exception e){
+            } catch (Exception e) {
                 System.out.println("error in this line: " + line);
             }
 
@@ -43,10 +43,10 @@ public class FileService {
             file = new File(fileName);
             output = new BufferedWriter(new FileWriter(file));
             output.write(text);
-        } catch ( IOException e ) {
+        } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if ( output != null ) {
+            if (output != null) {
                 output.close();
             }
         }
@@ -54,8 +54,7 @@ public class FileService {
     }
 
     public MultipartFile createMultipartFile(String text, String fileName) throws IOException {
-        File file =  writeFile(text, fileName);
-
+        File file = writeFile(text, fileName);
 
 
         FileItem fileItem = new DiskFileItem("mainFile", Files.probeContentType(file.toPath()), false, file.getName(), (int) file.length(), file.getParentFile());
@@ -68,7 +67,7 @@ public class FileService {
             // do something.
         }
 
-return null;
+        return null;
 
     }
 

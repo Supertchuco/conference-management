@@ -1,7 +1,6 @@
 package com.manager.conferencemanagement.service;
 
 
-
 import com.manager.conferencemanagement.vo.Lecture;
 import com.manager.conferencemanagement.vo.LecturesEventDay;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,27 +24,27 @@ public class ProcessInputService {
         LinkedHashSet<Lecture> lectures = fileService.buildLectures(fileText);
         LecturesEventDay lecturesEventDay = new LecturesEventDay(lectures);
         Collection<LecturesEventDay> LecturesEventDayList = processEventDays(lecturesEventDay);
-       return buildReport(LecturesEventDayList);
+        return buildReport(LecturesEventDayList);
     }
 
-    public  Collection<LecturesEventDay> processEventDays(LecturesEventDay lecturesEventDay){
+    public Collection<LecturesEventDay> processEventDays(LecturesEventDay lecturesEventDay) {
         Collection<LecturesEventDay> LecturesEventDayListReturn = new ArrayList<>();
 
-        while(lecturesEventDay.getAvailable().size() > 0){
+        while (lecturesEventDay.getAvailable().size() > 0) {
 
-            if(!CollectionUtils.isEmpty(lecturesEventDay.getAvailable())) {
+            if (!CollectionUtils.isEmpty(lecturesEventDay.getAvailable())) {
                 lecturesEventDay = organizeLecturesPeriod(lecturesEventDay, 180, true);
             }
 
-            if(!CollectionUtils.isEmpty(lecturesEventDay.getAvailable())){
+            if (!CollectionUtils.isEmpty(lecturesEventDay.getAvailable())) {
                 lecturesEventDay = organizeLecturesPeriod(lecturesEventDay, 240, false);
             }
 
 
             LecturesEventDayListReturn.add(lecturesEventDay);
-            if(lecturesEventDay.getAvailable().size() == 0){
+            if (lecturesEventDay.getAvailable().size() == 0) {
                 break;
-            }else{
+            } else {
                 lecturesEventDay = new LecturesEventDay(lecturesEventDay.getAvailable());
             }
         }
@@ -53,17 +52,17 @@ public class ProcessInputService {
     }
 
 
-    private StringBuffer buildTrackEventInfo(StringBuffer stringBuffer, Collection<Lecture>lecturesList){
-        for(Lecture lecture : lecturesList){
+    private StringBuffer buildTrackEventInfo(StringBuffer stringBuffer, Collection<Lecture> lecturesList) {
+        for (Lecture lecture : lecturesList) {
             stringBuffer.append(lecture.getStartTimeEvent()).append(" ").append(lecture.getName()).append(" ").append(lecture.getTime()).append("min").append(System.getProperty("line.separator"));
         }
         return stringBuffer;
     }
 
-    private String buildReport(Collection<LecturesEventDay> LecturesEventDayList){
+    private String buildReport(Collection<LecturesEventDay> LecturesEventDayList) {
         StringBuffer stringBuffer = new StringBuffer();
         int index = 1;
-        for(LecturesEventDay lecturesEventDay : LecturesEventDayList){
+        for (LecturesEventDay lecturesEventDay : LecturesEventDayList) {
             stringBuffer.append("Track " + index).append(System.getProperty("line.separator"));
             stringBuffer = buildTrackEventInfo(stringBuffer, lecturesEventDay.getMorningPeriod());
             stringBuffer = buildTrackEventInfo(stringBuffer, lecturesEventDay.getAfternoonPeriod());
@@ -71,11 +70,6 @@ public class ProcessInputService {
         }
 
         return stringBuffer.toString();
-    }
-
-    private String encode64(String stringToEncode) {
-        byte[] encodedBytes = Base64.getEncoder().encode(stringToEncode.getBytes());
-        return new String(encodedBytes);
     }
 
     public Lecture findLectureByMinorTime(Collection<Lecture> lecturesInput) {
@@ -116,7 +110,7 @@ public class ProcessInputService {
     public Lecture findLectureByMaxNearTime(Collection<Lecture> lecturesInput, int inputTime) {
         Lecture lectureReturn = null;
         int minorLectureTime = findLectureByMinorTime(lecturesInput).getTime();
-        while (inputTime > minorLectureTime) {
+        while (inputTime >= minorLectureTime) {
             lectureReturn = findLectureBySpecificTime(lecturesInput, inputTime);
             if (Objects.isNull(lectureReturn)) {
                 inputTime--;
@@ -166,14 +160,10 @@ public class ProcessInputService {
         int total = 0;
         maxTime = (morningPeriod) ? maxTime : maxTime - 10;
         Collection<Lecture> outputLecture = new ArrayList<>();
-
-       // List<Lecture> availableLecture = new ArrayList<>( (morningPeriod) ? lecturesEventDay.getAvailable() : lecturesEventDay.getAfternoonPeriod());
-
         List<Lecture> availableLecture = new ArrayList<>(lecturesEventDay.getAvailable());
-
         LocalTime localTime = (morningPeriod) ? LocalTime.of(9, 00) : LocalTime.of(13, 00);
         boolean exitLoop = false;
-        while(availableLecture.size() > 0  && exitLoop == false){
+        while (availableLecture.size() > 0 && exitLoop == false) {
             if (total == maxTime) {
                 break;
             } else if (total > maxTime) {
@@ -191,9 +181,9 @@ public class ProcessInputService {
                 outputLecture.add(input);
                 total += input.getTime();
                 localTime = localTime.plusMinutes(input.getTime());
-                if(input.getTime() == 45 || input.getTime() == 15){
+                if (input.getTime() == 45 || input.getTime() == 15) {
                     Lecture inputAux = findLectureBySpecificTime(availableLecture, input.getTime());
-                    if(Objects.nonNull(inputAux)){
+                    if (Objects.nonNull(inputAux)) {
                         inputAux.setStartTimeEvent(localTime);
                         outputLecture.add(inputAux);
                         availableLecture.remove(inputAux);
@@ -202,7 +192,7 @@ public class ProcessInputService {
                     }
                 }
             }
-          }
+        }
 
         Lecture lastLecture = findLastLectureElement(outputLecture);
         localTime = lastLecture.getStartTimeEvent().plusMinutes(lastLecture.getTime());
